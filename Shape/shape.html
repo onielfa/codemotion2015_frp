@@ -1,0 +1,45 @@
+<html>
+<head>
+	<title></title>
+	<link rel="stylesheet" type="text/css" href="../lib/bootstrap.css"></script>
+	<script src="../lib/jquery-2.1.4.js"></script>
+	<script src="../lib/bacon.js"></script>
+	<script src="shape.js"></script>
+</head>
+<body>
+	<div class="container-fluid">
+		<div class="row">
+			<!--Controllers: Shape, Color, Size, Position -->
+			<div class="col-md-4">
+				<form>
+					<div class="form-group">
+						<label>Shape:</label>
+						<select class="form-control" id="shape">
+							<option value="Square">Square</option>
+							<option value="Circle">Circle</option>
+							<option value="Triangle">Triangle</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<label>Size:</label>
+						<input class="form-control" type="number" id="size" value=100></input>		
+					</div>
+					<div class="form-group">
+						<label>Color:</label>
+						<select class="form-control" id="color">
+							<option value="Red">Red</option>
+							<option value="Green">Green</option>
+							<option value="Blue">Blue</option>
+						</select>
+					</div>
+				</form>
+			</div>
+			<div class="col-md-8">
+				<canvas id="canvas" height="1000px" width="1000px"></canvas>
+			</div>
+		</div>
+		<div class="row">
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style type="text/css">
+      html, body { height: 100%; margin: 0; padding: 0; }
+      #wrapper {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+      #map {
+          width: 50%;
+          height: 100%;
+          float:left;
+      }
+      #messages {
+          width: 50%;
+          height: 100%;
+          overflow: hidden;
+        }
+      .message 
+      {
+        height: 20px;
+        margin-bottom: 5px;
+        margin-left: 5px;
+        margin-right: 5px;
+        padding-left: 5px;
+        padding-top: 5px;
+        background-color: #CCCCCC;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="wrapper">
+      <div id="map"></div>
+      <div id="messages">
+      </div>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="../Bacon.js"></script>
+    <script src="../jquery-2.1.4.js"></script>
+    <script type="text/javascript">
+
+      var map;
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: 39.46975, lng: 0.37739},
+          zoom: 8
+        });
+      }
+
+      function putMarker(tweet){
+        if (map !== undefined)
+        {
+         var marker = new google.maps.Marker({
+                        map: map,
+                        position: tweet.pos,
+                        title: tweet.text,
+                        animation: google.maps.Animation.DROP
+                      }); 
+       }
+      }
+
+      function writeTweet(t)
+      {
+        $("#messages").append("<div class='message'>Tweet at ("+ t.pos.lat + " , " + t.pos.lng + ") : " + t.text +"</div>")
+      }
+
+      var inNorth = t => { return t.pos.lat > 39.46 };
+      var inSouth = t => { return !inNorth(t); }
+
+      var socket = io();
+
+      var tweetStream = Bacon.fromEvent(socket, 'tweet');
+
+      var northStream = tweetStream.filter(inNorth)
+                                   .map(t => {
+                                    t.text = t.text + ' (N)';
+                                    return t;
+                                   });
+
+      var southStream = tweetStream.filter(inSouth)
+                                   .map(t => {
+                                    t.text = t.text + ' (S)';
+                                    return t;
+                                   });
+
+      var finalStream = northStream.merge(southStream);
+
+      finalStream.onValue(t => 
+        { 
+          putMarker(t);
+          writeTweet(t);
+        });
+    </script>
+    <script 
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDY0kkJiTPVd2U7aTOAwhc9ySH6oHxOIYM&callback=initMap">
+    </script>
+
+  </body>
+</html>
